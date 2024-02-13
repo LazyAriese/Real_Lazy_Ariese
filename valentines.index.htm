@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Interactive Surprise Boxes</title>
+   <style>
+      body {
+         font-family: Arial, sans-serif;
+         margin: 0;
+         padding: 0;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         height: 100vh;
+         background-color: #f0f0f0;
+      }
+      .container {
+         text-align: center;
+      }
+      .box-container {
+         position: relative;
+         width: 200px;
+         height: 200px;
+         display: inline-block;
+         margin-right: 20px;
+      }
+      .closed {
+         background-color: #fff;
+         border: 2px solid #333;
+         border-radius: 10px;
+         position: relative;
+         overflow: hidden;
+      }
+      .lid {
+         width: 100%;
+         height: 40px;
+         background-color: #ccc;
+         position: absolute;
+         top: -40px;
+      }
+      .box-content {
+         padding: 20px;
+      }
+      img {
+         display: none;
+         margin: 0 auto;
+      }
+      .content {
+         display: none;
+      }
+      #openButton {
+         margin-top: 20px;
+         padding: 10px 20px;
+         background-color: #333;
+         color: #fff;
+         border: none;
+         border-radius: 5px;
+         cursor: pointer;
+      }
+      .arrow {
+         display: inline-block;
+         width: 0;
+         height: 0;
+         border-top: 10px solid transparent;
+         border-bottom: 10px solid transparent;
+         border-right: 10px solid #333;
+         margin-left: 20px;
+         cursor: pointer;
+      }
+      .input-area {
+         margin-top: 20px;
+      }
+   </style>
+</head>
+<body>
+   <div class="container">
+      <div class="box-container">
+         <div id="surpriseBox1" class="closed">
+            <div class="lid"></div>
+            <div class="box-content">
+               <img src="yawa_box.jpg" alt="Surprise Image" width="150">
+               <p class="content">I missed you</p>
+            </div>
+         </div>
+      </div>
+      <div class="box-container">
+         <div id="surpriseBox2" class="closed">
+            <div class="lid"></div>
+            <div class="box-content">
+               <img src="yawa_box.jpg" alt="Surprise Image" width="150">
+               <p class="content">I miss you Jed i wanna suck your boobs right now, Hmp..I love you</p>
+            </div>
+         </div>
+      </div>
+      <div class="arrow"></div>
+      <div class="input-area">
+         <!-- You can add your offensive words here -->
+         <!-- Example: <input type="text" placeholder="I miss you Jed i wanna suck your boobs right now, Hmp..I love you"> -->
+      </div>
+   </div>
+   <script>
+      document.querySelector(".arrow").addEventListener("click", function() {
+         var surpriseBox1 = document.getElementById("surpriseBox1");
+         surpriseBox1.classList.toggle("open");
+         var boxContent1 = surpriseBox1.querySelector(".box-content");
+         var surpriseBox2 = document.getElementById("surpriseBox2");
+         surpriseBox2.classList.toggle("open");
+         var boxContent2 = surpriseBox2.querySelector(".box-content");
+         if (surpriseBox1.classList.contains("open")) {
+            boxContent1.querySelector("img").style.display = "block";
+            boxContent1.querySelector(".content").style.display = "block";
+         } else {
+            boxContent1.querySelector("img").style.display = "none";
+            boxContent1.querySelector(".content").style.display = "none";
+         }
+         if (surpriseBox2.classList.contains("open")) {
+            boxContent2.querySelector("img").style.display = "block";
+            boxContent2.querySelector(".content").style.display = "block";
+         } else {
+            boxContent2.querySelector("img").style.display = "none";
+            boxContent2.querySelector(".content").style.display = "none";
+         }
+      });
+   </script>
+</body>
+</html>
