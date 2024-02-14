@@ -26,6 +26,7 @@
     let pipeX = canvas.width;
     let score = 0;
     let gameOver = false; // Flag to track game over state
+    let wingFlap = false; // Flag to track wing flapping
 
     function drawBird() {
         // Head
@@ -62,7 +63,7 @@
         ctx.closePath();
     }
 
-    function drawPipe() {
+    function drawPipe(pipeX) {
         ctx.beginPath();
         ctx.rect(pipeX, 0, 50, canvas.height - pipeGap - 100); // Upper pipe
         ctx.fillStyle = 'green';
@@ -76,6 +77,10 @@
     }
 
     function moveBird() {
+        if (wingFlap) {
+            birdVelocity = jumpStrength;
+            wingFlap = false;
+        }
         birdVelocity += gravity;
         birdY += birdVelocity;
     }
@@ -115,22 +120,35 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawBird();
         moveBird();
-        drawPipe();
+        drawPipes();
         movePipe();
         drawScore();
         requestAnimationFrame(updateGame);
     }
 
+    function drawPipes() {
+        for (let i = 0; i < pipePositions.length; i++) {
+            drawPipe(pipePositions[i]);
+        }
+    }
+
+    const pipePositions = [canvas.width, canvas.width + 200, canvas.width + 400]; // Initial pipe positions
+
+    setInterval(() => {
+        const newPipeX = canvas.width;
+        pipePositions.push(newPipeX);
+    }, 2000); // Add a new pipe every 2 seconds
+
     canvas.addEventListener('mousedown', function(event) { // Listen for mouse click
         if (!gameOver) { // Check game over state
-            birdVelocity = jumpStrength;
+            wingFlap = true; // Set wing flap flag
         }
     });
 
     canvas.addEventListener('touchstart', function(event) { // Listen for touch start
         event.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
         if (!gameOver) { // Check game over state
-            birdVelocity = jumpStrength;
+            wingFlap = true; // Set wing flap flag
         }
     });
 
