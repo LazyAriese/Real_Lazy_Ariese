@@ -1,127 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Interactive Surprise Boxes</title>
-   <style>
-      body {
-         font-family: Arial, sans-serif;
-         margin: 0;
-         padding: 0;
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         height: 100vh;
-         background-color: #f0f0f0;
-      }
-      .container {
-         text-align: center;
-      }
-      .box-container {
-         position: relative;
-         width: 200px;
-         height: 200px;
-         display: inline-block;
-         margin-right: 20px;
-      }
-      .closed {
-         background-color: #fff;
-         border: 2px solid #333;
-         border-radius: 10px;
-         position: relative;
-         overflow: hidden;
-      }
-      .lid {
-         width: 100%;
-         height: 40px;
-         background-color: #ccc;
-         position: absolute;
-         top: -40px;
-      }
-      .box-content {
-         padding: 20px;
-      }
-      img {
-         display: none;
-         margin: 0 auto;
-      }
-      .content {
-         display: none;
-      }
-      #openButton {
-         margin-top: 20px;
-         padding: 10px 20px;
-         background-color: #333;
-         color: #fff;
-         border: none;
-         border-radius: 5px;
-         cursor: pointer;
-      }
-      .arrow {
-         display: inline-block;
-         width: 0;
-         height: 0;
-         border-top: 10px solid transparent;
-         border-bottom: 10px solid transparent;
-         border-right: 10px solid #333;
-         margin-left: 20px;
-         cursor: pointer;
-      }
-      .input-area {
-         margin-top: 20px;
-      }
-   </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flappy Bird</title>
+<style>
+    canvas {
+        display: block;
+        margin: 0 auto;
+        background-color: #70c5ce; /* Sky blue color */
+    }
+</style>
 </head>
 <body>
-   <div class="container">
-      <div class="box-container">
-         <div id="surpriseBox1" class="closed">
-            <div class="lid"></div>
-            <div class="box-content">
-               <img src="yawa_box.jpg" alt="Surprise Image" width="150">
-               <p class="content">I missed you</p>
-            </div>
-         </div>
-      </div>
-      <div class="box-container">
-         <div id="surpriseBox2" class="closed">
-            <div class="lid"></div>
-            <div class="box-content">
-               <img src="yawa_box.jpg" alt="Surprise Image" width="150">
-               <p class="content">I miss you Jed i wanna suck your boobs right now, Hmp..I love you</p>
-            </div>
-         </div>
-      </div>
-      <div class="arrow"></div>
-      <div class="input-area">
-         <!-- You can add your offensive words here -->
-         <!-- Example: <input type="text" placeholder="I miss you Jed i wanna suck your boobs right now, Hmp..I love you"> -->
-      </div>
-   </div>
-   <script>
-      document.querySelector(".arrow").addEventListener("click", function() {
-         var surpriseBox1 = document.getElementById("surpriseBox1");
-         surpriseBox1.classList.toggle("open");
-         var boxContent1 = surpriseBox1.querySelector(".box-content");
-         var surpriseBox2 = document.getElementById("surpriseBox2");
-         surpriseBox2.classList.toggle("open");
-         var boxContent2 = surpriseBox2.querySelector(".box-content");
-         if (surpriseBox1.classList.contains("open")) {
-            boxContent1.querySelector("img").style.display = "block";
-            boxContent1.querySelector(".content").style.display = "block";
-         } else {
-            boxContent1.querySelector("img").style.display = "none";
-            boxContent1.querySelector(".content").style.display = "none";
-         }
-         if (surpriseBox2.classList.contains("open")) {
-            boxContent2.querySelector("img").style.display = "block";
-            boxContent2.querySelector(".content").style.display = "block";
-         } else {
-            boxContent2.querySelector("img").style.display = "none";
-            boxContent2.querySelector(".content").style.display = "none";
-         }
-      });
-   </script>
+<canvas id="gameCanvas" width="400" height="600"></canvas>
+<script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let birdY = canvas.height / 2;
+    let birdVelocity = 0;
+    const gravity = 0.5;
+    const jumpStrength = -10;
+    const pipeGap = 150;
+    let pipeX = canvas.width;
+    let score = 0;
+    let gameOver = false; // Flag to track game over state
+
+    function drawBird() {
+        // Head
+        ctx.beginPath();
+        ctx.arc(50, birdY, 20, 0, Math.PI * 2);
+        ctx.fillStyle = 'black'; // Changed the fill color to black
+        ctx.fill();
+        ctx.closePath();
+
+        // Eyes
+        ctx.beginPath();
+        ctx.arc(45, birdY - 5, 5, 0, Math.PI * 2); // Left eye
+        ctx.fillStyle = 'white'; // Eye color
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.arc(55, birdY - 5, 5, 0, Math.PI * 2); // Right eye
+        ctx.fillStyle = 'white'; // Eye color
+        ctx.fill();
+        ctx.closePath();
+
+        // Pupils
+        ctx.beginPath();
+        ctx.arc(45, birdY - 5, 2, 0, Math.PI * 2); // Left pupil
+        ctx.fillStyle = 'black'; // Pupil color
+        ctx.fill();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.arc(55, birdY - 5, 2, 0, Math.PI * 2); // Right pupil
+        ctx.fillStyle = 'black'; // Pupil color
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function drawPipe() {
+        ctx.beginPath();
+        ctx.rect(pipeX, 0, 50, canvas.height - pipeGap - 100); // Upper pipe
+        ctx.fillStyle = 'green';
+        ctx.fill();
+        ctx.closePath();
+        ctx.beginPath();
+        ctx.rect(pipeX, canvas.height - pipeGap + 100, 50, canvas.height); // Lower pipe
+        ctx.fillStyle = 'green';
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function moveBird() {
+        birdVelocity += gravity;
+        birdY += birdVelocity;
+    }
+
+    function movePipe() {
+        pipeX -= 2;
+        if (pipeX + 50 < 0) {
+            pipeX = canvas.width;
+            score += 10; // Increment score for passing each obstacle
+        }
+    }
+
+    function drawScore() {
+        ctx.fillStyle = 'black';
+        ctx.font = '24px Arial';
+        ctx.fillText('Score: ' + score, 10, 30);
+    }
+
+    function checkCollision() {
+        if (birdY - 20 < 0 || birdY + 20 > canvas.height) {
+            return true;
+        }
+        if (pipeX < 70 && pipeX + 50 > 50) {
+            if (birdY - 20 < canvas.height - pipeGap - 100 || birdY + 20 > canvas.height - pipeGap + 100) { // Adjusted for obstacle gap
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function updateGame() {
+        if (checkCollision() && !gameOver) { // Check game over state
+            gameOver = true; // Set game over flag
+            alert('Game over! Your score: ' + score);
+            document.location.reload();
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBird();
+        moveBird();
+        drawPipe();
+        movePipe();
+        drawScore();
+        requestAnimationFrame(updateGame);
+    }
+
+    canvas.addEventListener('mousedown', function(event) { // Listen for mouse click
+        if (!gameOver) { // Check game over state
+            birdVelocity = jumpStrength;
+        }
+    });
+
+    canvas.addEventListener('touchstart', function(event) { // Listen for touch start
+        event.preventDefault(); // Prevent default touch behavior (e.g., scrolling)
+        if (!gameOver) { // Check game over state
+            birdVelocity = jumpStrength;
+        }
+    });
+
+    updateGame();
+</script>
 </body>
 </html>
